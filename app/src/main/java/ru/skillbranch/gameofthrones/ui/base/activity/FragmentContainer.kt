@@ -1,0 +1,5 @@
+package ru.skillbranch.gameofthrones.ui.base.activity
+
+interface FragmentContainer {
+  fun setContainerId()
+}
