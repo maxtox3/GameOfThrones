@@ -1,65 +1,57 @@
 package ru.skillbranch.gameofthrones.ui.main
 
 import android.os.Bundle
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import ru.skillbranch.gameofthrones.Screen
+import androidx.fragment.app.FragmentFactory
+import com.arkivanov.mvikotlin.core.store.StoreFactory
 import ru.skillbranch.gameofthrones.R
-import ru.skillbranch.gameofthrones.ui.base.activity.BaseActivityFragmentContainer
-import ru.skillbranch.gameofthrones.ui.info.CharacterFragment
-import ru.skillbranch.gameofthrones.ui.list.CharactersListFragment
-import ru.skillbranch.gameofthrones.ui.splash.SplashFragment
+import ru.skillbranch.gameofthrones.repositories.RootRepository
+import ru.skillbranch.gameofthrones.storeFactoryInstance
 
-class MainActivity : BaseActivityFragmentContainer(), MainActivityCallback {
+class MainActivity : AppCompatActivity() {
+
+  private val fragmentFactory = MainActivityFragmentFactoryImpl()
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    supportFragmentManager.fragmentFactory = fragmentFactory
     super.onCreate(savedInstanceState)
+
+    setContentView(R.layout.content)
+
     if (savedInstanceState == null) {
-      navigateToSplash()
+      supportFragmentManager
+        .beginTransaction()
+        .add(R.id.content_container, fragmentFactory.rootFragment())
+        .commit()
     }
   }
 
-  override fun navigateToSplash() {
-    navigateToFragment(Screen.SplashScreen, null, false)
+  override fun onBackPressed() {
+    supportFragmentManager
+      .fragments
+      .forEach {
+        if ((it as? RootFragment)?.onBackPressed() == true) {
+          return
+        }
+      }
+
+    super.onBackPressed()
   }
 
-  override fun navigateToCharactersList() {
-    navigateToFragment(Screen.CharactersListScreen, null, false)
-  }
+  private inner class MainActivityFragmentFactoryImpl : FragmentFactory() {
+    override fun instantiate(classLoader: ClassLoader, className: String): Fragment =
+      when (loadFragmentClass(classLoader, className)) {
+        RootFragment::class.java -> rootFragment()
+        else -> super.instantiate(classLoader, className)
+      }
 
-  override fun navigateToCharacter() {
-    navigateToFragment(Screen.CharacterScreen, null, false)
-  }
-
-  override fun createFragment(tag: String, args: Bundle?): Fragment {
-    when (tag) {
-      Screen.SplashScreen -> return SplashFragment()
-      Screen.CharacterScreen -> return CharacterFragment()
-      Screen.CharactersListScreen -> return CharactersListFragment()
-      else -> Log.i("createFragment: ", "you must add your fragment")
-    }
-    return Fragment()
-  }
-
-  override fun getContentViewResourceId(): Int {
-    return R.layout.activity_main
-  }
-
-  override fun setContainerId() {
-    setContainerId(R.id.fragment_container)
-  }
-
-  override fun setupWidgets() {
-//    val nav = findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
-//    nav.setOnNavigationItemSelectedListener(
-//      { item ->
-//        when (item.itemId) {
-//          R.id.map_button -> navigateToMap()
-////                        R.id.top_button -> navigateToTop()
-////                        R.id.favorites_button -> navigateToFavorites()
-////                        R.id.profile_button -> navigateToProfile()
-//        }
-//        true
-//      })
+    fun rootFragment(): RootFragment =
+      RootFragment(
+        object : RootFragment.Dependencies {
+          override val storeFactory: StoreFactory get() = storeFactoryInstance
+          override val rootRepository: RootRepository = RootRepository
+        }
+      )
   }
 }

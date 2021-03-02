@@ -5,6 +5,7 @@ import ru.skillbranch.gameofthrones.data.local.entities.CharacterFull
 import ru.skillbranch.gameofthrones.data.local.entities.CharacterItem
 import ru.skillbranch.gameofthrones.data.remote.res.CharacterRes
 import ru.skillbranch.gameofthrones.data.remote.res.HouseRes
+import ru.skillbranch.gameofthrones.debugLog
 
 object RootRepository {
 
@@ -14,6 +15,7 @@ object RootRepository {
    */
   @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   fun getAllHouses(result: (houses: List<HouseRes>) -> Unit) {
+    debugLog("inside rootRepository")
     //TODO implement me
   }
 

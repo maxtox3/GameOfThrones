@@ -33,24 +33,26 @@ dependencies {
 
     implementation "androidx.room:room-runtime:2.2.6"
     annotationProcessor "androidx.room:room-compiler:2.2.6"
-//    implementation "androidx.room:room-ktx:2.2.6"
-    implementation "android.arch.persistence.room:rxjava2:2.2.6"
+    implementation "androidx.room:room-ktx:2.2.6"
 
     implementation "com.google.code.gson:gson:2.8.6"
-    implementation "com.squareup.okhttp3:okhttp:3.10.0"
+    implementation "com.squareup.okhttp3:okhttp:4.3.1"
     implementation "com.squareup.okhttp3:logging-interceptor:3.10.0"
-    implementation "com.squareup.retrofit2:retrofit:2.3.0"
+    implementation "com.squareup.retrofit2:retrofit:2.7.0"
     implementation "com.squareup.retrofit2:converter-gson:2.3.0"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:2.3.0"
 
-    annotationProcessor "com.google.dagger:dagger-compiler:2.11"
-    implementation "com.google.dagger:dagger:2.11"
-    implementation "com.google.dagger:dagger-android-support:2.11"
-    annotationProcessor "com.google.dagger:dagger-android-processor:2.11"
+    implementation 'com.badoo.reaktive:reaktive:1.1.20'
+    implementation 'com.badoo.reaktive:utils:1.1.20'
+    implementation 'com.badoo.reaktive:coroutines-interop:1.1.20'
 
-    implementation "io.reactivex.rxjava2:rxkotlin:2.1.0"
-    implementation "io.reactivex.rxjava2:rxandroid:2.0.1"
-
+    implementation "com.arkivanov.mvikotlin:mvikotlin:2.0.1"
+    implementation "com.arkivanov.mvikotlin:mvikotlin-main:2.0.1"
+    implementation "com.arkivanov.mvikotlin:mvikotlin-timetravel:2.0.1"
+    implementation "com.arkivanov.mvikotlin:mvikotlin-logging:2.0.1"
+    implementation "com.arkivanov.mvikotlin:mvikotlin-extensions-androidx:2.0.1"
+    implementation "com.arkivanov.mvikotlin:mvikotlin-extensions-reaktive:2.0.1"
+    implementation "com.arkivanov.mvikotlin:keepers:2.0.1"
+    implementation "com.arkivanov.mvikotlin:rx:2.0.1"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

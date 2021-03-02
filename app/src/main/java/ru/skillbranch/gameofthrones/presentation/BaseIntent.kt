@@ -1,3 +1,0 @@
-package ru.skillbranch.gameofthrones.presentation
-
-interface BaseIntent
