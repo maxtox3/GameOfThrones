@@ -1,5 +1,9 @@
 package ru.skillbranch.gameofthrones.data.remote.res
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
+
+@Serializable
 data class CharacterRes(
   val url: String,
   val name: String,
@@ -14,7 +18,7 @@ data class CharacterRes(
   val spouse: String,
   val allegiances: List<String> = listOf(),
   val books: List<String> = listOf(),
-  val povBooks: List<Any> = listOf(),
+  val povBooks: List<JsonElement> = listOf(),
   val tvSeries: List<String> = listOf(),
   val playedBy: List<String> = listOf()
 )

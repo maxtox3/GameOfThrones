@@ -1,8 +1,11 @@
 package ru.skillbranch.gameofthrones.repositories
 
 import androidx.annotation.VisibleForTesting
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import ru.skillbranch.gameofthrones.data.local.entities.CharacterFull
 import ru.skillbranch.gameofthrones.data.local.entities.CharacterItem
+import ru.skillbranch.gameofthrones.data.remote.api.RetrofitBuilder.apiService
 import ru.skillbranch.gameofthrones.data.remote.res.CharacterRes
 import ru.skillbranch.gameofthrones.data.remote.res.HouseRes
 import ru.skillbranch.gameofthrones.debugLog
@@ -15,8 +18,23 @@ object RootRepository {
    */
   @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   fun getAllHouses(result: (houses: List<HouseRes>) -> Unit) {
-    debugLog("inside rootRepository")
-    //TODO implement me
+    val resultHouses = mutableListOf<HouseRes>()
+    var page = 1
+    fun loadHouses() {
+      GlobalScope.launch {
+        debugLog("request for allHouses")
+        val allHouses = apiService.getAllHouses(page = page)
+        when {
+          allHouses.isEmpty() -> result(resultHouses)
+          allHouses.isNotEmpty() -> {
+            resultHouses.addAll(allHouses)
+            page++
+            loadHouses()
+          }
+        }
+      }
+    }
+    loadHouses()
   }
 
   /**
@@ -26,7 +44,14 @@ object RootRepository {
    */
   @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   fun getNeedHouses(vararg houseNames: String, result: (houses: List<HouseRes>) -> Unit) {
-    //TODO implement me
+    houseNames.forEach { houseName ->
+      GlobalScope.launch {
+        debugLog("request for house: $houseName")
+        //todo(need to get from db, if empty -> api)
+        val houseInfo = apiService.getHouseInfo(houseName)
+        result(houseInfo)
+      }
+    }
   }
 
   /**
@@ -39,7 +64,15 @@ object RootRepository {
     vararg houseNames: String,
     result: (houses: List<Pair<HouseRes, List<CharacterRes>>>) -> Unit
   ) {
-    //TODO implement me
+    //todo(need to get from db, if empty -> api)
+    houseNames.forEach { houseName ->
+      GlobalScope.launch {
+        val houseInfo = apiService.getHouseInfo(houseName)
+//        val characters = houseInfo.forEach { house ->
+//          apiService.getCharacter
+//        }
+      }
+    }
   }
 
   /**

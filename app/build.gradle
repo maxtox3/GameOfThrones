@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlinx-serialization'
 
 android {
     compileSdkVersion 30
@@ -39,7 +40,7 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:4.3.1"
     implementation "com.squareup.okhttp3:logging-interceptor:3.10.0"
     implementation "com.squareup.retrofit2:retrofit:2.7.0"
-    implementation "com.squareup.retrofit2:converter-gson:2.3.0"
+    implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
 
     implementation 'com.badoo.reaktive:reaktive:1.1.20'
     implementation 'com.badoo.reaktive:utils:1.1.20'
@@ -53,6 +54,8 @@ dependencies {
     implementation "com.arkivanov.mvikotlin:mvikotlin-extensions-reaktive:2.0.1"
     implementation "com.arkivanov.mvikotlin:keepers:2.0.1"
     implementation "com.arkivanov.mvikotlin:rx:2.0.1"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

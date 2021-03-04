@@ -24,9 +24,11 @@ internal class SplashStoreFactory(
       name = "SplashStore",
       initialState = State(),
       bootstrapper = SimpleBootstrapper(Unit),
-      executorFactory = { ExecutorImpl() },
+      executorFactory = ::createExecutor,
       reducer = ReducerImpl
     ) {}
+
+  private fun createExecutor(): Executor<Intent, Unit, State, Result, Nothing> = ExecutorImpl()
 
   sealed class Result : JvmSerializable {
     object Loading : Result()
@@ -48,6 +50,7 @@ internal class SplashStoreFactory(
     override fun executeAction(action: Unit, getState: () -> State) {
       singleFromFunction {
         rootRepository.getAllHouses { list ->
+          debugLog(list.size.toString())
           rootRepository.insertHouses(list) {}
         }
       }
