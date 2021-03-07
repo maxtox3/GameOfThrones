@@ -9,6 +9,9 @@ import com.badoo.reaktive.single.map
 import com.badoo.reaktive.single.observeOn
 import com.badoo.reaktive.single.singleFromFunction
 import com.badoo.reaktive.single.subscribeOn
+import ru.skillbranch.gameofthrones.AppConfig
+import ru.skillbranch.gameofthrones.data.remote.res.CharacterRes
+import ru.skillbranch.gameofthrones.data.remote.res.HouseRes
 import ru.skillbranch.gameofthrones.debugLog
 import ru.skillbranch.gameofthrones.presentation.splash.SplashStore.Intent
 import ru.skillbranch.gameofthrones.presentation.splash.SplashStore.State
@@ -50,8 +53,17 @@ internal class SplashStoreFactory(
     override fun executeAction(action: Unit, getState: () -> State) {
       singleFromFunction {
         rootRepository.getAllHouses { list ->
-          debugLog(list.size.toString())
           rootRepository.insertHouses(list) {}
+
+          rootRepository.getNeedHouses(*AppConfig.NEED_HOUSES) { houses ->
+            val typedArray = houses.map { it.name }.toTypedArray()
+
+            rootRepository.getNeedHouseWithCharacters(*typedArray) { listOfPairs ->
+              listOfPairs.forEach { pair: Pair<HouseRes, List<CharacterRes>> ->
+                rootRepository.insertCharacters(pair.second) {}
+              }
+            }
+          }
         }
       }
         .subscribeOn(ioScheduler)

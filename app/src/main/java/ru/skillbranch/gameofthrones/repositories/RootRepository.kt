@@ -2,15 +2,28 @@ package ru.skillbranch.gameofthrones.repositories
 
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import ru.skillbranch.gameofthrones.AppConfig
+import ru.skillbranch.gameofthrones.BuildConfig
+import ru.skillbranch.gameofthrones.data.*
+import ru.skillbranch.gameofthrones.data.local.cache.CharacterDao
+import ru.skillbranch.gameofthrones.data.local.cache.HouseDao
 import ru.skillbranch.gameofthrones.data.local.entities.CharacterFull
 import ru.skillbranch.gameofthrones.data.local.entities.CharacterItem
-import ru.skillbranch.gameofthrones.data.remote.api.RetrofitBuilder.apiService
+import ru.skillbranch.gameofthrones.data.remote.api.AppServiceFactory
 import ru.skillbranch.gameofthrones.data.remote.res.CharacterRes
 import ru.skillbranch.gameofthrones.data.remote.res.HouseRes
 import ru.skillbranch.gameofthrones.debugLog
+import ru.skillbranch.gameofthrones.parseId
 
 object RootRepository {
+
+  lateinit var houseDao: HouseDao
+  lateinit var characterDao: CharacterDao
+
+  private val apiService = AppServiceFactory.makeMainService(BuildConfig.DEBUG, AppConfig.BASE_URL)
 
   /**
    * Получение данных о всех домах из сети
@@ -44,13 +57,8 @@ object RootRepository {
    */
   @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   fun getNeedHouses(vararg houseNames: String, result: (houses: List<HouseRes>) -> Unit) {
-    houseNames.forEach { houseName ->
-      GlobalScope.launch {
-        debugLog("request for house: $houseName")
-        //todo(need to get from db, if empty -> api)
-        val houseInfo = apiService.getHouseInfo(houseName)
-        result(houseInfo)
-      }
+    GlobalScope.launch {
+      result(houseNames.map { async { apiService.getHouse(it).first() } }.awaitAll())
     }
   }
 
@@ -64,16 +72,21 @@ object RootRepository {
     vararg houseNames: String,
     result: (houses: List<Pair<HouseRes, List<CharacterRes>>>) -> Unit
   ) {
-    //todo(need to get from db, if empty -> api)
-    houseNames.forEach { houseName ->
+    getNeedHouses(*houseNames) { listOfHouses ->
       GlobalScope.launch {
-        val houseInfo = apiService.getHouseInfo(houseName)
-//        val characters = houseInfo.forEach { house ->
-//          apiService.getCharacter
-//        }
+        result(
+          listOfHouses.map { houseRes ->
+            async {
+              houseRes to houseRes.swornMembers.map { characterUrl ->
+                async { apiService.getCharacter(parseId(characterUrl)) }
+              }.awaitAll()
+            }
+          }.awaitAll()
+        )
       }
     }
   }
+
 
   /**
    * Запись данных о домах в DB
@@ -83,7 +96,12 @@ object RootRepository {
    */
   @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   fun insertHouses(houses: List<HouseRes>, complete: () -> Unit) {
-    //TODO implement me
+    GlobalScope.launch {
+      houses.map(HouseRes::toHouse).toTypedArray().let {
+        houseDao.insertAll(*it)
+        complete()
+      }
+    }
   }
 
   /**
@@ -94,7 +112,10 @@ object RootRepository {
    */
   @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   fun insertCharacters(Characters: List<CharacterRes>, complete: () -> Unit) {
-    //TODO implement me
+    GlobalScope.launch {
+      characterDao.insertAll(*Characters.map(CharacterRes::toCharacter).toTypedArray())
+      complete()
+    }
   }
 
   /**
@@ -103,7 +124,11 @@ object RootRepository {
    */
   @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   fun dropDb(complete: () -> Unit) {
-    //TODO implement me
+    GlobalScope.launch {
+      characterDao.nukeTable()
+      houseDao.nukeTable()
+      complete()
+    }
   }
 
   /**
@@ -114,7 +139,16 @@ object RootRepository {
    */
   @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   fun findCharactersByHouseName(name: String, result: (characters: List<CharacterItem>) -> Unit) {
-    //TODO implement me
+    val characters = mutableListOf<CharacterItem>()
+    GlobalScope.launch {
+      houseDao.getByName(name)?.id ?: "".let { houseId ->
+        characterDao
+          .findByHouseId(houseId = houseId)
+          ?.map { it.toCharacterItem(name) }
+          ?.let { characters.addAll(it) }
+      }
+    }
+    result(characters)
   }
 
   /**
@@ -125,7 +159,16 @@ object RootRepository {
    */
   @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   fun findCharacterFullById(id: String, result: (character: CharacterFull) -> Unit) {
-    //TODO implement me
+    GlobalScope.launch {
+      characterDao.getById(id)?.let { character ->
+        if (character.father.isNotEmpty()) debugLog("FATHER FOUND!! ${character.father}")
+        if (character.mother.isNotEmpty()) debugLog("MOTHER FOUND!! ${character.mother}")
+        val house = houseDao.getById(character.houseId)
+        val father = characterDao.getById(parseId(character.father))?.toRelativeCharacter(house)
+        val mother = characterDao.getById(parseId(character.mother))?.toRelativeCharacter(house)
+        result(character.toCharacterFull(house, father = father, mother = mother))
+      }
+    }
   }
 
   /**
@@ -133,7 +176,9 @@ object RootRepository {
    * @param result - колбек о завершении очистки db
    */
   fun isNeedUpdate(result: (isNeed: Boolean) -> Unit) {
-    //TODO implement me
+    GlobalScope.launch {
+      result(houseDao.all().isNullOrEmpty())
+    }
   }
 
 }

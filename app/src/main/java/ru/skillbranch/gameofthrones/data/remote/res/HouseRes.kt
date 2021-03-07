@@ -1,7 +1,6 @@
 package ru.skillbranch.gameofthrones.data.remote.res
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
 
 @Serializable
 data class HouseRes(
@@ -19,6 +18,6 @@ data class HouseRes(
   val founder: String,
   val diedOut: String,
   val ancestralWeapons: List<String> = listOf(),
-  val cadetBranches: List<JsonElement> = listOf(),
+  val cadetBranches: List<String> = listOf(),
   val swornMembers: List<String> = listOf()
 )

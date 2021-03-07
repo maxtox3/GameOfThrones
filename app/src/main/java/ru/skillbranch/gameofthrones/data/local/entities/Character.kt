@@ -1,6 +1,10 @@
 package ru.skillbranch.gameofthrones.data.local.entities
 
+import androidx.room.*
+
+@Entity
 data class Character(
+  @PrimaryKey
   val id: String,
   val name: String,
   val gender: String,
@@ -12,7 +16,8 @@ data class Character(
   val father: String, //rel
   val mother: String, //rel
   val spouse: String,
-  val houseId: String//rel
+  @ColumnInfo(name = "house_id")
+  val houseId: String //rel
 )
 
 data class CharacterItem(

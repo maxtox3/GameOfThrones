@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.widget.EditText
@@ -22,7 +21,7 @@ import com.arkivanov.mvikotlin.timetravel.store.TimeTravelStoreFactory
 import kotlin.math.roundToInt
 
 fun Any.debugLog(text: String?) {
-  Log.d(this.javaClass.name, text ?: "")
+  println("${this.javaClass.name}: $text")
 }
 
 val storeFactoryInstance: StoreFactory =
@@ -99,4 +98,8 @@ private fun adjustAlpha(color: Int, factor: Float): Int {
   val green = Color.green(color)
   val blue = Color.blue(color)
   return Color.argb(alpha, red, green, blue)
+}
+
+fun parseId(url: String): String {
+  return url.substringAfterLast("/")
 }
