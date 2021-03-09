@@ -117,11 +117,22 @@ fun avatarByHouseName(houseName: String): Int = when (houseName) {
 
 fun shortenHouseName(fullHouseName: String): String = when (fullHouseName) {
   "House Stark of Winterfell" -> "Stark"
-    "House Lannister of Casterly Rock" -> "Lannister"
-    "House Targaryen of King's Landing" -> "Targaryen"
+  "House Lannister of Casterly Rock" -> "Lannister"
+  "House Targaryen of King's Landing" -> "Targaryen"
   "House Greyjoy of Pyke" -> "Greyjoy"
-    "House Tyrell of Highgarden" -> "Tyrell"
-    "House Baratheon of Dragonstone" -> "Baratheon"
+  "House Tyrell of Highgarden" -> "Tyrell"
+  "House Baratheon of Dragonstone" -> "Baratheon"
   "House Nymeros Martell of Sunspear" -> "Martell"
   else -> throw NotImplementedError("not implemented shortenHouseName")
+}
+
+fun Context.colorIdByHouseName(shortenHouseName: String): Int = when (shortenHouseName) {
+  "Stark" -> resources.getColor(R.color.stark_primary, theme)
+  "Lannister" -> resources.getColor(R.color.lannister_primary, theme)
+  "Targaryen" -> resources.getColor(R.color.targaryen_primary, theme)
+  "Greyjoy" -> resources.getColor(R.color.greyjoy_primary, theme)
+  "Tyrell" -> resources.getColor(R.color.tyrel_primary, theme)
+  "Baratheon" -> resources.getColor(R.color.baratheon_primary, theme)
+  "Martell" -> resources.getColor(R.color.martel_primary, theme)
+  else -> throw NotImplementedError("not implemented colorIdByHouseName")
 }
