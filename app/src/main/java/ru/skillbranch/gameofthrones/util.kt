@@ -114,3 +114,14 @@ fun avatarByHouseName(houseName: String): Int = when (houseName) {
   "House Nymeros Martell of Sunspear" -> R.drawable.martel_icon
   else -> throw NotImplementedError("not implemented avatarByHouseName")
 }
+
+fun shortenHouseName(fullHouseName: String): String = when (fullHouseName) {
+  "House Stark of Winterfell" -> "Stark"
+    "House Lannister of Casterly Rock" -> "Lannister"
+    "House Targaryen of King's Landing" -> "Targaryen"
+  "House Greyjoy of Pyke" -> "Greyjoy"
+    "House Tyrell of Highgarden" -> "Tyrell"
+    "House Baratheon of Dragonstone" -> "Baratheon"
+  "House Nymeros Martell of Sunspear" -> "Martell"
+  else -> throw NotImplementedError("not implemented shortenHouseName")
+}

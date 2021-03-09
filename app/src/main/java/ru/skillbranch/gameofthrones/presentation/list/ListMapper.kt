@@ -2,11 +2,12 @@ package ru.skillbranch.gameofthrones.presentation.list
 
 import ru.skillbranch.gameofthrones.presentation.search.SearchStore
 import ru.skillbranch.gameofthrones.presentation.search.SearchView
+import ru.skillbranch.gameofthrones.shortenHouseName
 
 val listStateToListModel: ListStore.State.() -> ListView.Model? = {
   ListView.Model(
     loading = loading,
-    tabs = data.keys.toList(),
+    tabs = data.keys.map { shortenHouseName(it) },
     error = error,
     housesWithCharacters = data
   )
