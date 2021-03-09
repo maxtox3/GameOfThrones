@@ -6,6 +6,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import ru.skillbranch.gameofthrones.R
+import ru.skillbranch.gameofthrones.app
+import ru.skillbranch.gameofthrones.data.local.cache.CharacterDao
+import ru.skillbranch.gameofthrones.data.local.cache.HouseDao
 import ru.skillbranch.gameofthrones.repositories.RootRepository
 import ru.skillbranch.gameofthrones.storeFactoryInstance
 
@@ -51,6 +54,8 @@ class MainActivity : AppCompatActivity() {
         object : RootFragment.Dependencies {
           override val storeFactory: StoreFactory get() = storeFactoryInstance
           override val rootRepository: RootRepository = RootRepository
+          override val houseDao: HouseDao = app.houseDao
+          override val characterDao: CharacterDao = app.characterDao
         }
       )
   }

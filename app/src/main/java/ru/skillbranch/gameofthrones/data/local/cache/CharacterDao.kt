@@ -11,20 +11,20 @@ interface CharacterDao {
   suspend fun all(): List<Character?>?
 
   @Query("SELECT * FROM character WHERE id IN (:characterIds)")
-  fun getAllByIds(vararg characterIds: String): List<Character?>?
+  suspend fun getAllByIds(vararg characterIds: String): List<Character?>?
 
   @Query("SELECT * FROM character WHERE id LIKE (:characterId) LIMIT 1")
-  fun getById(characterId: String): Character?
+  suspend fun getById(characterId: String): Character?
 
   @Query("SELECT * FROM character WHERE house_id LIKE :houseId")
-  fun findByHouseId(houseId: String): List<Character>?
+  suspend fun findByHouseId(houseId: String): List<Character>?
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  fun insertAll(vararg characters: Character)
+  suspend fun insertAll(vararg characters: Character)
 
   @Delete
-  fun delete(character: Character)
+  suspend fun delete(character: Character)
 
   @Query("DELETE FROM character")
-  fun nukeTable()
+  suspend fun nukeTable()
 }

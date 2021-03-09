@@ -25,6 +25,6 @@ interface HouseDao {
   suspend fun delete(house: House)
 
   @Query("DELETE FROM house")
-  fun nukeTable()
+  suspend fun nukeTable()
 
 }

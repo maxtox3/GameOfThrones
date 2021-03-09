@@ -5,8 +5,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import ru.skillbranch.gameofthrones.R
+import ru.skillbranch.gameofthrones.data.local.cache.CharacterDao
+import ru.skillbranch.gameofthrones.data.local.cache.HouseDao
+import ru.skillbranch.gameofthrones.presentation.list.ListController
 import ru.skillbranch.gameofthrones.presentation.splash.SplashController
 import ru.skillbranch.gameofthrones.repositories.RootRepository
+import ru.skillbranch.gameofthrones.ui.list.CharactersListContainerFragment
 import ru.skillbranch.gameofthrones.ui.splash.SplashFragment
 
 class RootFragment(
@@ -23,7 +27,7 @@ class RootFragment(
     if (savedInstanceState == null) {
       childFragmentManager
         .beginTransaction()
-        .add(R.id.content_container, fragmentFactory.splashFragment())
+        .add(R.id.content_container, fragmentFactory.characterListFragment())
         .commit()
     }
   }
@@ -37,11 +41,15 @@ class RootFragment(
     }
 
   private fun handleSplashOutput(output: SplashController.Output) {
-    openList()
-//    when (output) {
-//      is SplashController.Loaded -> openList(itemId = output.id)
-//      is SplashController.Error -> openList(itemId = output.id)
-//    }.let {}
+    when (output) {
+      is SplashController.Output.DataLoaded -> openList()
+    }.let {}
+  }
+
+  private fun handleListOutput(output: ListController.Output) {
+    when (output) {
+      ListController.Output.DataLoaded -> TODO()
+    }
   }
 
   private fun openList() {
@@ -58,17 +66,11 @@ class RootFragment(
       .commit()
   }
 
-  interface Dependencies {
-    val storeFactory: StoreFactory
-    val rootRepository: RootRepository
-//    val database: Database
-  }
-
   private inner class FragmentFactoryImpl : FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment =
       when (loadFragmentClass(classLoader, className)) {
         SplashFragment::class.java -> splashFragment()
-//        CharactersListFragment::class.java -> characterListFragment()
+        CharactersListContainerFragment::class.java -> characterListFragment()
 //        CharacterFragment::class.java -> characterFragment()
         else -> super.instantiate(classLoader, className)
       }
@@ -80,16 +82,25 @@ class RootFragment(
         }
       )
 
-//    fun characterFragment(): CharacterFragment =
+    //    fun characterFragment(): CharacterFragment =
 //      CharacterFragment(
 //        object : CharacterFragment.Dependencies, Dependencies by dependencies {
 //        }
 //      )
 //
-//    fun characterListFragment(): CharactersListFragment =
-//      CharactersListFragment(
-//        object : CharactersListFragment.Dependencies, Dependencies by dependencies {
-//        }
-//      )
+    fun characterListFragment(): CharactersListContainerFragment =
+      CharactersListContainerFragment(
+        object : CharactersListContainerFragment.Dependencies, Dependencies by dependencies {
+          override val output: (ListController.Output) -> Unit = ::handleListOutput
+        }
+      )
+  }
+
+  interface Dependencies {
+    val storeFactory: StoreFactory
+    val rootRepository: RootRepository
+    val houseDao: HouseDao
+    val characterDao: CharacterDao
+//    val database: Database
   }
 }

@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">GameOfThrones</string>
+    <string name="app_name">Game of Thrones</string>
+    <string name="item_name">John Doe</string>
+    <string name="stab">lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum</string>
 </resources>

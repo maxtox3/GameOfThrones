@@ -8,7 +8,7 @@ interface SplashView : MviView<Model, Nothing> {
   data class Model(
     val loaded: Boolean = false,
     val error: String? = null,
-    val loading: Boolean = false
+    val mainLoading: Boolean = false
   )
 
 }

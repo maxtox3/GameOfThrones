@@ -18,7 +18,7 @@ class SplashViewImpl(root: View) : BaseMviView<Model, Nothing>(), SplashView {
 
   override val renderer: ViewRenderer<Model> =
     diff {
-      diff(Model::loading) {
+      diff(Model::mainLoading) {
         image.animateColorFilter()
       }
     }

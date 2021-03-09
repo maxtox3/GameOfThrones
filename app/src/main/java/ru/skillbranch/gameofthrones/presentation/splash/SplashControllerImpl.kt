@@ -5,6 +5,7 @@ import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.lifecycle.Lifecycle
 import com.arkivanov.mvikotlin.core.lifecycle.doOnDestroy
 import com.arkivanov.mvikotlin.extensions.reaktive.bind
+import com.arkivanov.mvikotlin.extensions.reaktive.labels
 import com.arkivanov.mvikotlin.extensions.reaktive.states
 import com.badoo.reaktive.observable.mapNotNull
 import ru.skillbranch.gameofthrones.presentation.splash.SplashController.Dependencies
@@ -22,13 +23,16 @@ class SplashControllerImpl(
     }
 
   init {
+    bind(dependencies.lifecycle, BinderLifecycleMode.CREATE_DESTROY) {
+      store.labels.mapNotNull(splashLabelToOutput) bindTo dependencies.output
+    }
+
     dependencies.lifecycle.doOnDestroy(store::dispose)
   }
 
   override fun onViewCreated(splashView: SplashView, viewLifecycle: Lifecycle) {
     bind(viewLifecycle, BinderLifecycleMode.START_STOP) {
       store.states.mapNotNull(splashStateToSplashModel) bindTo splashView
-      // bindTo dependencies.output
     }
   }
 }

@@ -103,3 +103,14 @@ private fun adjustAlpha(color: Int, factor: Float): Int {
 fun parseId(url: String): String {
   return url.substringAfterLast("/")
 }
+
+fun avatarByHouseName(houseName: String): Int = when (houseName) {
+  "House Stark of Winterfell" -> R.drawable.stark_icon
+  "House Lannister of Casterly Rock" -> R.drawable.lannister_icon
+  "House Targaryen of King's Landing" -> R.drawable.targaryen_icon
+  "House Greyjoy of Pyke" -> R.drawable.greyjoy_icon
+  "House Tyrell of Highgarden" -> R.drawable.tyrel_icon
+  "House Baratheon of Dragonstone" -> R.drawable.baratheon_icon
+  "House Nymeros Martell of Sunspear" -> R.drawable.martel_icon
+  else -> throw NotImplementedError("not implemented avatarByHouseName")
+}
