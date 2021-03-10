@@ -29,7 +29,7 @@ val searchLabelToListIntent: SearchStore.Label.() -> ListStore.Intent? = {
 
 val listEventToListIntent: ListView.Event.() -> ListStore.Intent? = {
   when (this) {
-
+    is ListView.Event.ItemClicked -> null
     else -> throw NotImplementedError("not implemented listEventToListIntent")
   }
 }
@@ -49,7 +49,7 @@ val searchStateToSearchModel: SearchStore.State.() -> SearchView.Model? = {
 
 val listEventToOutput: ListView.Event.() -> ListController.Output? = {
   when (this) {
-
+    is ListView.Event.ItemClicked -> ListController.Output.OpenCharacterInfo(characterItem.id)
     else -> throw NotImplementedError("not implemented listEventToOutput")
   }
 }

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coordinator">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/app_bar"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:fitsSystemWindows="true"
+        app:expanded="false">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/collapsing_layout"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="exitUntilCollapsed|scroll"
+            app:toolbarId="@+id/toolbar"
+            app:expandedTitleGravity="center_horizontal|bottom"
+            app:expandedTitleMarginBottom="64dp"
+            app:expandedTitleTextAppearance="@style/CollapsingTitleAppearance"
+            app:title="@string/app_name">
+
+            <ImageView
+                android:id="@+id/character_imv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:src="@drawable/stark_coast_of_arms"
+                app:layout_collapseMode="parallax"
+                android:fitsSystemWindows="true"
+                android:visibility="visible"/>
+
+            <androidx.appcompat.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:id="@+id/toolbar"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                android:fitsSystemWindows="false"/>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/words_tv_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:drawableLeft="@drawable/ic_icon_decor"
+                android:drawableTint="?attr/colorAccent"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/words"
+                android:textColor="@color/color_gray_dark"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/words_tv"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:id="@+id/words_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:textColor="@color/color_gray_dark"
+                android:textSize="16sp"
+                app:layout_constraintBaseline_toBaselineOf="@id/words_tv_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/words_tv_label"/>
+
+            <TextView
+                android:id="@+id/born_tv_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:drawableLeft="@drawable/ic_icon_decor"
+                android:drawableTint="?attr/colorAccent"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/born"
+                android:textColor="@color/color_gray_dark"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/born_tv"
+                app:layout_constraintTop_toBottomOf="@id/words_tv_label"/>
+
+            <TextView
+                android:id="@+id/born_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:textColor="@color/color_gray_dark"
+                android:textSize="16sp"
+                app:layout_constraintBaseline_toBaselineOf="@id/born_tv_label"
+                app:layout_constraintStart_toEndOf="@id/born_tv_label"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/titles_tv_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:drawableLeft="@drawable/ic_icon_decor"
+                android:drawableTint="?attr/colorAccent"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/titles"
+                android:textColor="@color/color_gray_dark"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/titles_tv"
+                app:layout_constraintTop_toBottomOf="@id/born_tv_label"/>
+
+            <TextView
+                android:id="@+id/titles_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:textColor="@color/color_gray_dark"
+                android:textSize="16sp"
+                app:layout_constraintBaseline_toBaselineOf="@id/titles_tv_label"
+                app:layout_constraintStart_toEndOf="@id/titles_tv_label"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/aliases_tv_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:drawableLeft="@drawable/ic_icon_decor"
+                android:drawableTint="?attr/colorAccent"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/aliases"
+                android:textColor="@color/color_gray_dark"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/aliases_tv"
+                app:layout_constraintTop_toBottomOf="@id/titles_tv_label"/>
+
+            <TextView
+                android:id="@+id/aliases_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:textColor="@color/color_gray_dark"
+                android:textSize="16sp"
+                app:layout_constraintBaseline_toBaselineOf="@id/aliases_tv_label"
+                app:layout_constraintStart_toEndOf="@id/aliases_tv_label"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/father_group"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:visibility="visible"
+                app:constraint_referenced_ids="father_tv_label"
+                app:layout_constraintTop_toBottomOf="@id/aliases_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/father_tv_label"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="11dp"
+                android:fontFamily="sans-serif-medium"
+                android:paddingStart="32dp"
+                android:singleLine="false"
+                android:text="@string/father"
+                android:textColor="@color/color_gray_dark"
+                app:layout_constraintBaseline_toBaselineOf="@id/father_btn"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <Button
+                android:id="@+id/father_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="?attr/colorPrimary"
+                android:textColor="@android:color/white"
+                app:layout_constraintStart_toEndOf="@id/father_tv_label"
+                app:layout_constraintTop_toBottomOf="@id/aliases_tv_label"/>
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="father_btn, father_tv_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/mother_group"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:visibility="visible"
+                app:constraint_referenced_ids="mother_tv_label, mother_btn"
+                app:layout_constraintTop_toBottomOf="@id/barrier"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/mother_tv_label"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="11dp"
+                android:fontFamily="sans-serif-medium"
+                android:paddingStart="32dp"
+                android:singleLine="false"
+                android:text="@string/mother"
+                android:textColor="@color/color_gray_dark"
+                app:layout_constraintBaseline_toBaselineOf="@id/mother_btn"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <Button
+                android:id="@+id/mother_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="?attr/colorPrimary"
+                android:textColor="@android:color/white"
+                app:layout_constraintStart_toEndOf="@id/mother_tv_label"
+                app:layout_constraintTop_toBottomOf="@id/barrier"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

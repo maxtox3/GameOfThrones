@@ -1,19 +1,15 @@
-package ru.skillbranch.gameofthrones.presentation.list
+package ru.skillbranch.gameofthrones.presentation.info
 
 import com.arkivanov.mvikotlin.core.lifecycle.Lifecycle
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.keepers.instancekeeper.InstanceKeeper
 import ru.skillbranch.gameofthrones.data.local.cache.CharacterDao
 import ru.skillbranch.gameofthrones.data.local.cache.HouseDao
-import ru.skillbranch.gameofthrones.presentation.search.SearchView
 
-interface ListController {
-
-  val input: (Input) -> Unit
+interface CharacterController {
 
   fun onViewCreated(
-    listView: ListView,
-    searchView: SearchView,
+    characterView: CharacterView,
     viewLifecycle: Lifecycle
   )
 
@@ -24,22 +20,20 @@ interface ListController {
     val lifecycle: Lifecycle
     val instanceKeeper: InstanceKeeper
     val output: (Output) -> Unit
+    val characterId: String
   }
 
   sealed class Output {
-    data class OpenCharacterInfo(val id: String) : Output()
-  }
-
-  sealed class Input {
-
+    object DataLoaded : Output()
   }
 }
 
-class ListControllerDependencies(
+class CharacterControllerDependencies(
   override val storeFactory: StoreFactory,
   override val lifecycle: Lifecycle,
   override val instanceKeeper: InstanceKeeper,
-  override val output: (ListController.Output) -> Unit,
+  override val output: (CharacterController.Output) -> Unit,
   override val houseDao: HouseDao,
-  override val characterDao: CharacterDao
-) : ListController.Dependencies
+  override val characterDao: CharacterDao,
+  override val characterId: String
+) : CharacterController.Dependencies
