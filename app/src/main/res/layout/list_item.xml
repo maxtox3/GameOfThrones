@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?selectableItemBackground"
     android:orientation="horizontal"
@@ -21,7 +21,7 @@
         android:layout_marginStart="16dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:id="@+id/name_tv"
@@ -29,18 +29,14 @@
             android:maxLines="1"/>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/info_tv"
             android:text="@string/stab"
             android:maxLines="2"
-            android:ellipsize="end"
-            />
-
+            android:ellipsize="end"/>
 
     </LinearLayout>
-
-
 
 
 </LinearLayout>

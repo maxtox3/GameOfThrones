@@ -1,4 +1,4 @@
-package ru.skillbranch.gameofthrones.presentation.list
+package ru.skillbranch.gameofthrones.presentation.houses
 
 import com.arkivanov.mvikotlin.core.binder.BinderLifecycleMode
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
@@ -11,21 +11,21 @@ import com.arkivanov.mvikotlin.extensions.reaktive.states
 import com.badoo.reaktive.observable.mapNotNull
 import com.badoo.reaktive.subject.Relay
 import com.badoo.reaktive.subject.publish.PublishSubject
-import ru.skillbranch.gameofthrones.presentation.list.ListController.Dependencies
-import ru.skillbranch.gameofthrones.presentation.list.ListController.Input
+import ru.skillbranch.gameofthrones.presentation.houses.HousesListController.Dependencies
+import ru.skillbranch.gameofthrones.presentation.houses.HousesListController.Input
 import ru.skillbranch.gameofthrones.presentation.search.SearchStoreFactory
 import ru.skillbranch.gameofthrones.presentation.search.SearchView
 
-class ListControllerImpl(
+class HousesListControllerImpl(
   private val dependencies: Dependencies
-) : ListController {
+) : HousesListController {
 
   private val inputRelay: Relay<Input> = PublishSubject()
   override val input: (Input) -> Unit = inputRelay::onNext
 
   private val listStore =
     dependencies.instanceKeeper.getStore {
-      ListStoreFactory(
+      HousesListStoreFactory(
         storeFactory = dependencies.storeFactory,
         houseDao = dependencies.houseDao,
         characterDao = dependencies.characterDao
@@ -41,23 +41,27 @@ class ListControllerImpl(
 
   init {
     bind(dependencies.lifecycle, BinderLifecycleMode.CREATE_DESTROY) {
-      inputRelay.mapNotNull(listInputToListIntent) bindTo listStore
-      searchStore.labels.mapNotNull(searchLabelToListIntent) bindTo listStore
+      inputRelay.mapNotNull(housesListInputToListIntent) bindTo listStore
+      searchStore.labels.mapNotNull(searchLabelToHousesListIntent) bindTo listStore
     }
 
     dependencies.lifecycle.doOnDestroy(listStore::dispose)
   }
 
-  override fun onViewCreated(listView: ListView, searchView: SearchView, viewLifecycle: Lifecycle) {
+  override fun onViewCreated(
+    housesListView: HousesListView,
+    searchView: SearchView,
+    viewLifecycle: Lifecycle
+  ) {
     bind(viewLifecycle, BinderLifecycleMode.CREATE_DESTROY) {
-      listView.events.mapNotNull(listEventToListIntent) bindTo listStore
+      housesListView.events.mapNotNull(housesListEventToListIntent) bindTo listStore
       searchView.events.mapNotNull(searchEventToSearchIntent) bindTo searchStore
     }
 
     bind(viewLifecycle, BinderLifecycleMode.START_STOP) {
-      listStore.states.mapNotNull(listStateToListModel) bindTo listView
+      listStore.states.mapNotNull(housesListStateToListModel) bindTo housesListView
       searchStore.states.mapNotNull(searchStateToSearchModel) bindTo searchView
-      listView.events.mapNotNull(listEventToOutput) bindTo dependencies.output
+      housesListView.events.mapNotNull(housesListEventToOutput) bindTo dependencies.output
     }
   }
 }

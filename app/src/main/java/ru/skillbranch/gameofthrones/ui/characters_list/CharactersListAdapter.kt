@@ -1,4 +1,4 @@
-package ru.skillbranch.gameofthrones.ui.list
+package ru.skillbranch.gameofthrones.ui.characters_list
 
 import android.view.LayoutInflater
 import android.view.View
@@ -34,7 +34,10 @@ class CharactersListAdapter(
   override fun getItemCount(): Int = items.size
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(items[position])
-
+//
+//  interface Listener {
+//    fun onItemClick(id: String)
+//  }
 
   private companion object {
     private fun diff(

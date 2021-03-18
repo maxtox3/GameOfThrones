@@ -1,4 +1,4 @@
-package ru.skillbranch.gameofthrones.presentation.list
+package ru.skillbranch.gameofthrones.presentation.houses
 
 import com.arkivanov.mvikotlin.core.store.*
 import com.arkivanov.mvikotlin.core.utils.JvmSerializable
@@ -14,19 +14,18 @@ import kotlinx.coroutines.awaitAll
 import ru.skillbranch.gameofthrones.AppConfig
 import ru.skillbranch.gameofthrones.data.local.cache.CharacterDao
 import ru.skillbranch.gameofthrones.data.local.cache.HouseDao
-import ru.skillbranch.gameofthrones.data.local.entities.CharacterItem
-import ru.skillbranch.gameofthrones.data.toCharacterItem
+import ru.skillbranch.gameofthrones.data.local.entities.House
 import ru.skillbranch.gameofthrones.debugLog
-import ru.skillbranch.gameofthrones.presentation.list.ListStore.*
+import ru.skillbranch.gameofthrones.presentation.houses.HousesListStore.*
 
-internal class ListStoreFactory(
+internal class HousesListStoreFactory(
   private val storeFactory: StoreFactory,
   private val houseDao: HouseDao,
   private val characterDao: CharacterDao
 ) {
 
-  fun create(): ListStore =
-    object : ListStore, Store<Intent, State, Label> by storeFactory.create(
+  fun create(): HousesListStore =
+    object : HousesListStore, Store<Intent, State, Label> by storeFactory.create(
       name = "ListStore",
       initialState = State(),
       bootstrapper = SimpleBootstrapper(Unit),
@@ -42,29 +41,19 @@ internal class ListStoreFactory(
       singleFromCoroutine {
         AppConfig.NEED_HOUSES.map { houseName ->
           async {
-            val house = houseDao.getByName(houseName)
-            val characters = house?.id?.let { houseId ->
-              characterDao.findByHouseId(houseId)?.map { it.toCharacterItem(houseName) }
-            }
-            houseName to (characters ?: emptyList())
+            houseDao.getByName(houseName) ?: throw NullPointerException()
           }
         }.awaitAll()
       }
         .subscribeOn(ioScheduler)
-        .map { it.toMap() }
+        .map { it }
         .map(Result::Loaded)
         .observeOn(mainScheduler)
         .subscribeScoped(
           isThreadLocal = true,
-          onSuccess = ::onSuccessLoading,
+          onSuccess = ::dispatch,
           onError = ::handleError
         )
-    }
-
-    fun onSuccessLoading(result: Result.Loaded) {
-      debugLog("data loaded")
-      result.data
-      dispatch(result)
     }
 
     override fun executeIntent(intent: Intent, getState: () -> State) {
@@ -81,7 +70,7 @@ internal class ListStoreFactory(
 
   sealed class Result : JvmSerializable {
     object Loading : Result()
-    data class Loaded(val data: Map<String, List<CharacterItem>>) : Result()
+    data class Loaded(val data: List<House>) : Result()
     data class Error(val message: String) : Result()
   }
 

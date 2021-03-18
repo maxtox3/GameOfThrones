@@ -1,4 +1,4 @@
-package ru.skillbranch.gameofthrones.presentation.list
+package ru.skillbranch.gameofthrones.presentation.houses
 
 import com.arkivanov.mvikotlin.core.lifecycle.Lifecycle
 import com.arkivanov.mvikotlin.core.store.StoreFactory
@@ -7,12 +7,12 @@ import ru.skillbranch.gameofthrones.data.local.cache.CharacterDao
 import ru.skillbranch.gameofthrones.data.local.cache.HouseDao
 import ru.skillbranch.gameofthrones.presentation.search.SearchView
 
-interface ListController {
+interface HousesListController {
 
   val input: (Input) -> Unit
 
   fun onViewCreated(
-    listView: ListView,
+    housesListView: HousesListView,
     searchView: SearchView,
     viewLifecycle: Lifecycle
   )
@@ -23,7 +23,7 @@ interface ListController {
     val storeFactory: StoreFactory
     val lifecycle: Lifecycle
     val instanceKeeper: InstanceKeeper
-    val output: (Output) -> Unit
+    val housesOutput: (Output) -> Unit
   }
 
   sealed class Output {
@@ -34,12 +34,3 @@ interface ListController {
 
   }
 }
-
-class ListControllerDependencies(
-  override val storeFactory: StoreFactory,
-  override val lifecycle: Lifecycle,
-  override val instanceKeeper: InstanceKeeper,
-  override val output: (ListController.Output) -> Unit,
-  override val houseDao: HouseDao,
-  override val characterDao: CharacterDao
-) : ListController.Dependencies

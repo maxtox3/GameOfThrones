@@ -7,12 +7,13 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import ru.skillbranch.gameofthrones.R
 import ru.skillbranch.gameofthrones.data.local.cache.CharacterDao
 import ru.skillbranch.gameofthrones.data.local.cache.HouseDao
+import ru.skillbranch.gameofthrones.presentation.characters.CharactersListController
+import ru.skillbranch.gameofthrones.presentation.houses.HousesListController
 import ru.skillbranch.gameofthrones.presentation.info.CharacterController
-import ru.skillbranch.gameofthrones.presentation.list.ListController
 import ru.skillbranch.gameofthrones.presentation.splash.SplashController
 import ru.skillbranch.gameofthrones.repositories.RootRepository
+import ru.skillbranch.gameofthrones.ui.houses_list.HousesListFragment
 import ru.skillbranch.gameofthrones.ui.info.CharacterFragment
-import ru.skillbranch.gameofthrones.ui.list.CharactersListContainerFragment
 import ru.skillbranch.gameofthrones.ui.splash.SplashFragment
 
 class RootFragment(
@@ -48,22 +49,32 @@ class RootFragment(
     }.let {}
   }
 
-  private fun handleListOutput(output: ListController.Output) {
+  private fun handleHousesListOutput(output: HousesListController.Output) {
     when (output) {
-      is ListController.Output.OpenCharacterInfo -> openCharacterInfo(output.id)
+      is HousesListController.Output.OpenCharacterInfo -> openCharacterInfo(output.id)
     }.let {}
   }
 
   private fun handleCharacterOutput(output: CharacterController.Output) {
     when (output) {
-      CharacterController.Output.DataLoaded -> { }
+      CharacterController.Output.DataLoaded -> {
+      }
+    }.let {}
+  }
+
+  private fun handleCharactersOutput(output: CharactersListController.Output) {
+    when (output) {
+      is CharactersListController.Output.OpenParentInfo -> openCharacterInfo(output.parentId)
     }.let {}
   }
 
   private fun openCharacterInfo(id: String) {
     childFragmentManager
       .beginTransaction()
-      .replace(R.id.content_container, fragmentFactory.characterFragment().setArguments(characterId = id))
+      .replace(
+        R.id.content_container,
+        fragmentFactory.characterFragment().setArguments(characterId = id)
+      )
       .addToBackStack(null)
       .commit()
   }
@@ -80,7 +91,7 @@ class RootFragment(
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment =
       when (loadFragmentClass(classLoader, className)) {
         SplashFragment::class.java -> splashFragment()
-        CharactersListContainerFragment::class.java -> characterListFragment()
+        HousesListFragment::class.java -> characterListFragment()
         CharacterFragment::class.java -> characterFragment()
         else -> super.instantiate(classLoader, className)
       }
@@ -99,10 +110,13 @@ class RootFragment(
         }
       )
 
-    fun characterListFragment(): CharactersListContainerFragment =
-      CharactersListContainerFragment(
-        object : CharactersListContainerFragment.Dependencies, Dependencies by dependencies {
-          override val output: (ListController.Output) -> Unit = ::handleListOutput
+    fun characterListFragment(): HousesListFragment =
+      HousesListFragment(
+        object : HousesListFragment.Dependencies, Dependencies by dependencies {
+          override val housesOutput: (HousesListController.Output) -> Unit =
+            ::handleHousesListOutput
+          override val charactersOutput: (CharactersListController.Output) -> Unit =
+            ::handleCharactersOutput
         }
       )
   }
@@ -112,6 +126,5 @@ class RootFragment(
     val rootRepository: RootRepository
     val houseDao: HouseDao
     val characterDao: CharacterDao
-//    val database: Database
   }
 }

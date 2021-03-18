@@ -1,4 +1,4 @@
-package ru.skillbranch.gameofthrones.ui.list
+package ru.skillbranch.gameofthrones.ui.houses_list
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
@@ -8,23 +8,30 @@ import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager.widget.ViewPager
+import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.core.utils.diff
 import com.arkivanov.mvikotlin.core.view.BaseMviView
 import com.arkivanov.mvikotlin.core.view.ViewRenderer
 import com.google.android.material.tabs.TabLayout
 import ru.skillbranch.gameofthrones.R
 import ru.skillbranch.gameofthrones.colorIdByHouseName
-import ru.skillbranch.gameofthrones.data.local.entities.CharacterItem
+import ru.skillbranch.gameofthrones.data.local.cache.CharacterDao
+import ru.skillbranch.gameofthrones.data.local.cache.HouseDao
+import ru.skillbranch.gameofthrones.data.local.entities.House
 import ru.skillbranch.gameofthrones.getViewById
-import ru.skillbranch.gameofthrones.presentation.list.ListView
-import ru.skillbranch.gameofthrones.presentation.list.ListView.Event
-import ru.skillbranch.gameofthrones.presentation.list.ListView.Model
+import ru.skillbranch.gameofthrones.presentation.characters.CharactersListController
+import ru.skillbranch.gameofthrones.presentation.houses.HousesListView
+import ru.skillbranch.gameofthrones.presentation.houses.HousesListView.Event
+import ru.skillbranch.gameofthrones.presentation.houses.HousesListView.Model
+import ru.skillbranch.gameofthrones.shortenHouseName
+import ru.skillbranch.gameofthrones.ui.characters_list.CharactersListFragment
 
 
-class ListViewImpl(
+class HousesListViewImpl(
   private val root: View,
+  private val dependencies: Dependencies,
   fragmentManager: FragmentManager
-) : BaseMviView<Model, Event>(), ListView {
+) : BaseMviView<Model, Event>(), HousesListView {
 
   private val pagerAdapter = ViewPagerAdapter(fragmentManager)
 
@@ -34,20 +41,18 @@ class ListViewImpl(
 
   override val renderer: ViewRenderer<Model> =
     diff {
-      diff(Model::tabs) { if (it.isNotEmpty()) updateTabs(it) }
-
-      diff(
-        get = Model::housesWithCharacters,
-        compare = { a, b -> a === b },
-        set = { updateFragments(it) }
-      )
+      diff(Model::houses) { list ->
+        updateTabs(list)
+        updateFragments(list)
+      }
     }
 
   init {
     viewPager.adapter = pagerAdapter
   }
 
-  private fun updateTabs(tabs: List<String>) {
+  private fun updateTabs(houses: List<House>) {
+    val tabs = houses.map { shortenHouseName(it.name) }
     tabLayout.removeAllTabs()
     if (tabs.isNotEmpty()) {
       tabs.forEach { tabLayout.addTab(tabLayout.newTab().setText(it)) }
@@ -56,7 +61,15 @@ class ListViewImpl(
       toolbar.setBackgroundColor(colorId)
       tabLayout.setBackgroundColor(colorId)
     }
+  }
 
+  private fun updateFragments(houses: List<House>) {
+    val fragmentsToSet = houses.map {
+      it.name to CharactersListFragment(
+        dependencies = object : CharactersListFragment.Dependencies, Dependencies by dependencies {}
+      ).setArguments(it.id)
+    }.toMap()
+    pagerAdapter.setData(fragmentsToSet)
   }
 
   private fun onTabSelectedListener(tabs: List<String>) =
@@ -80,15 +93,10 @@ class ListViewImpl(
       override fun onTabReselected(tab: TabLayout.Tab?) {}
     }
 
-  private fun updateFragments(data: Map<String, List<CharacterItem>>) {
-    val fragmentsToSet = data.map { (key, listOfCharacters) ->
-      key to CharactersListFragment(
-        dependencies = object : CharactersListFragment.Dependencies {
-          override val data: List<CharacterItem> = listOfCharacters
-          override val onItemClick: (CharacterItem) -> Unit =
-            { dispatch(Event.ItemClicked(it)) }
-        })
-    }.toMap()
-    pagerAdapter.setData(fragmentsToSet)
+  interface Dependencies {
+    val storeFactory: StoreFactory
+    val houseDao: HouseDao
+    val characterDao: CharacterDao
+    val charactersOutput: (CharactersListController.Output) -> Unit
   }
 }

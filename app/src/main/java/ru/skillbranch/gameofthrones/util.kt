@@ -26,7 +26,10 @@ fun Any.debugLog(text: String?) {
 
 val storeFactoryInstance: StoreFactory =
   if (BuildConfig.DEBUG) {
-    LoggingStoreFactory(delegate = TimeTravelStoreFactory(fallback = DefaultStoreFactory))
+    LoggingStoreFactory(
+      delegate = TimeTravelStoreFactory(fallback = DefaultStoreFactory),
+      logger = MyLogger
+    )
   } else {
     DefaultStoreFactory
   }

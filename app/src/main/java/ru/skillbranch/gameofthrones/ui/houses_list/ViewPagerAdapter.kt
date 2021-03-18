@@ -1,4 +1,4 @@
-package ru.skillbranch.gameofthrones.ui.list
+package ru.skillbranch.gameofthrones.ui.houses_list
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
